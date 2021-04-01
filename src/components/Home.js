@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { ImageBackground, AsyncStorage, View, Text, StyleSheet, Modal, TouchableOpacity, StatusBar, SafeAreaView, ScrollView, FlatList, TextInput, Alert, Image } from 'react-native'
+import { RefreshControl, ImageBackground, AsyncStorage, View, Text, StyleSheet, Modal, TouchableOpacity, StatusBar, SafeAreaView, ScrollView, FlatList, TextInput, Alert, Image } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Linking } from 'react-native';
 
-
+//arastar imagens pro lado com ofertas
+//modo de entrega local/endereço/buscar
+//codigo promocional/desconto
 
 const FOOD = [
     {
@@ -90,12 +92,16 @@ const DRINK = [
     },
 ];
 
-export default function Home() {
 
+
+export default function Home() {
+    const [listPortion, setListPortion] = React.useState(PORTION);
 
     //Action
     const [total, setTotal] = useState(0)
     const [pedidos, setPedidos] = useState([])
+    const [amount, setAmount] = useState([])
+    const [refreshPage, setRefreshPage] = useState("");
 
     //Profile
     const [name, setName] = useState(newName);
@@ -158,7 +164,22 @@ export default function Home() {
         item.quantidade = (item.quantidade + 1)
         setPedidos(pedidos + item.name + "\n")
     }
+    function removeItem() {
+        FOOD.forEach(function (item, indice, array) {
+            FOOD[indice].quantidade = 0
+        });
+
+        PORTION.forEach(function (item, indice, array) {
+            PORTION[indice].quantidade = 0
+        });
+
+        DRINK.forEach(function (item, indice, array) {
+            DRINK[indice].quantidade = 0
+        });
+
+    }
     function cleanWish() {
+        removeItem()
         setTotal(0)
         setPedidos([])
     }
@@ -175,18 +196,14 @@ export default function Home() {
 
     return (
         <SafeAreaView style={styles.container}>
-
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={styles.titleBanner}><MaterialIcons name="local-grocery-store" size={27} color="red" />R$: {total}</Text>
 
-                {/* <Text>Bem-Vindo {name}</Text> */}
                 <TouchableOpacity
                     style={styles.titleBanner}
-                    onPress={() => setProfile(true)}
-                >
-
+                    onPress={() => setProfile(true)}>
                     <MaterialIcons name="tag-faces" size={40} color="black" />
                 </TouchableOpacity>
+                <Text style={styles.titleBanner}><MaterialIcons name="local-grocery-store" size={27} color="red" />R$: {total}</Text>
 
             </View>
 
@@ -267,7 +284,11 @@ export default function Home() {
 
                             <TouchableOpacity onPress={() => selectItem(item, index)}>
                                 <View style={styles.btnFood}>
-                                    <Text style={styles.txtFood}>{item.name} </Text>
+
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <Text style={styles.txtFood}>{item.name} </Text>
+                                        <Text style={styles.txtFood}>{item.quantidade} </Text>
+                                    </View>
 
                                     <ImageBackground
                                         source={item.img}
@@ -308,7 +329,11 @@ export default function Home() {
 
                             <TouchableOpacity onPress={() => selectItem(item, index)}>
                                 <View style={styles.btnFood}>
-                                    <Text style={styles.txtFood}>{item.name} </Text>
+
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <Text style={styles.txtFood}>{item.name} </Text>
+                                        <Text style={styles.txtFood}>{item.quantidade} </Text>
+                                    </View>
 
                                     <ImageBackground
                                         source={item.img}
@@ -319,6 +344,7 @@ export default function Home() {
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                             <Text style={styles.txtPrice}>R$ {item.price}</Text>
                                             <AntDesign name="pluscircle" size={30} color="black" style={styles.btnMore} />
+
                                         </View>
 
                                     </ImageBackground>
@@ -349,7 +375,11 @@ export default function Home() {
 
                             <TouchableOpacity onPress={() => selectItem(item, index)}>
                                 <View style={styles.btnFood}>
-                                    <Text style={styles.txtFood}>{item.name} </Text>
+
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <Text style={styles.txtFood}>{item.name} </Text>
+                                        <Text style={styles.txtFood}>{item.quantidade} </Text>
+                                    </View>
 
                                     <ImageBackground
                                         source={item.img}
@@ -461,6 +491,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'center',
         padding: 7,
+        marginHorizontal: 10,
     },
     btnFood: {
         marginHorizontal: 15,
@@ -499,6 +530,4 @@ const styles = StyleSheet.create({
         flex: 1,
         resizeMode: "cover",
     }
-
-
 })
