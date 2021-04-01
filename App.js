@@ -1,8 +1,8 @@
 import React from 'react';
-import Tabs from './src/components/Index'
+import Home from './src/components/Home'
 
 export default function App() {
   return (
-   <Tabs/>
+  <Home/>
   );
 }
