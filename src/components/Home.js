@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { RefreshControl, ImageBackground, AsyncStorage, View, Text, StyleSheet, Modal, TouchableOpacity, StatusBar, SafeAreaView, ScrollView, FlatList, TextInput, Alert, Image } from 'react-native'
+import React, { useState, useEffect, Component } from 'react'
+import { ImageBackground, AsyncStorage, View, Text, StyleSheet, Modal, TouchableOpacity, StatusBar, SafeAreaView, ScrollView, FlatList, TextInput, Alert, Image } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Linking } from 'react-native';
+import NumberFormat from 'react-number-format';
+
 
 //arastar imagens pro lado com ofertas
 //modo de entrega local/endereço/buscar
@@ -58,7 +60,7 @@ const DRINK = [
     {
         id: '0000002',
         name: 'Sprite',
-        price: 5,
+        price: 5.00,
         quantidade: 0,
         img: require('../images/refri.jpg')
     },
@@ -72,36 +74,31 @@ const DRINK = [
     {
         id: '0000004',
         name: 'Soda',
-        price: 5,
+        price: 5.00,
         quantidade: 0,
         img: require('../images/refri.jpg')
     },
     {
         id: '0000005',
         name: 'Kuat',
-        price: 4,
+        price: 4.99,
         quantidade: 0,
         img: require('../images/refri.jpg')
     },
     {
         id: '0000006',
         name: 'Pepsi',
-        price: 5,
+        price: 5.00,
         quantidade: 0,
         img: require('../images/refri.jpg')
     },
 ];
 
-
-
 export default function Home() {
-    const [listPortion, setListPortion] = React.useState(PORTION);
 
     //Action
     const [total, setTotal] = useState(0)
     const [pedidos, setPedidos] = useState([])
-    const [amount, setAmount] = useState([])
-    const [refreshPage, setRefreshPage] = useState("");
 
     //Profile
     const [name, setName] = useState(newName);
@@ -109,6 +106,8 @@ export default function Home() {
 
     const [address, setAddress] = useState(newAddress);
     const [newAddress, setNewAddress] = useState(address)
+
+    const [promo, setPromo] = useState('')
 
     //Modals
     const [food, setFood] = useState(false)
@@ -119,6 +118,7 @@ export default function Home() {
 
     var phone = 5551993554823
     var mensagem = name + " gostaria de encomendar:" + "\n" + pedidos + "\n" + "Endereço: " + address + "\n" + "Aceitar ?"
+
 
     //Save Name
     useEffect(() => {
@@ -160,9 +160,10 @@ export default function Home() {
 
     //Functions
     function selectItem(item) {
+
+        setPedidos(pedidos + item.name + "\n")
         setTotal(total + item.price)
         item.quantidade = (item.quantidade + 1)
-        setPedidos(pedidos + item.name + "\n")
     }
     function removeItem() {
         FOOD.forEach(function (item, indice, array) {
@@ -195,7 +196,14 @@ export default function Home() {
     }
 
     return (
+
         <SafeAreaView style={styles.container}>
+
+            <StatusBar
+                animated={false}
+                backgroundColor="red"
+            />
+
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
 
                 <TouchableOpacity
@@ -203,8 +211,16 @@ export default function Home() {
                     onPress={() => setProfile(true)}>
                     <MaterialIcons name="tag-faces" size={40} color="black" />
                 </TouchableOpacity>
-                <Text style={styles.titleBanner}><MaterialIcons name="local-grocery-store" size={27} color="red" />R$: {total}</Text>
 
+                <NumberFormat
+                    value={total}
+                    decimalSeparator=","
+                    decimalScale={2}
+                    displayType={'text'}
+                    prefix={'R$: '}
+                    renderText={(value) =>
+                        <Text style={styles.titleBanner}><MaterialIcons name="local-grocery-store" size={27} color="red" />{value}</Text>
+                    } />
             </View>
 
             <View style={{ flexDirection: 'row', alignSelf: 'center' }}>
@@ -220,10 +236,10 @@ export default function Home() {
                     <Text style={{ color: "white", fontSize: 18 }}> <AntDesign name="closecircle" size={20} color="white" /> Limpar Lista</Text>
                 </TouchableOpacity>
             </View>
+
             <ScrollView>
                 <Text style={{ textAlign: 'center', fontSize: 25, marginTop: 40 }} >{pedidos}</Text>
             </ScrollView>
-
 
             <Modal //Profile
                 visible={profile}
@@ -271,10 +287,19 @@ export default function Home() {
             >
                 <SafeAreaView style={styles.containerModal}>
 
+                    <NumberFormat
+                        value={total}
+                        decimalSeparator=","
+                        decimalScale={2}
+                        displayType={'text'}
+                        prefix={'R$: '}
+                        renderText={(value) =>
+                            <Text style={styles.titleBanner}><MaterialIcons name="local-grocery-store" size={27} color="red" />{value}</Text>
+                        } />
+
                     <TouchableOpacity //Fechar
                         onPress={() => { setFood(false) }}>
-                        <AntDesign name="closecircle" size={30} color="red"
-                            style={{ alignSelf: 'center', marginBottom: 10 }} />
+                        <AntDesign name="closecircle" size={30} color="red" style={{ alignSelf: 'center' }} />
                     </TouchableOpacity>
 
                     <FlatList
@@ -282,30 +307,34 @@ export default function Home() {
                         keyExtractor={(item) => item.id}
                         renderItem={({ item, index }) => (
 
-                            <TouchableOpacity onPress={() => selectItem(item, index)}>
-                                <View style={styles.btnFood}>
+                            <View style={styles.btnFood}>
+
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <Text style={styles.txtFood}>{item.name} </Text>
+                                    <Text style={styles.txtFood}>{item.quantidade} </Text>
+                                </View>
+
+                                <ImageBackground
+                                    source={item.img}
+                                    style={styles.img}
+                                    imageStyle={{ borderRadius: 6 }}
+                                >
 
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <Text style={styles.txtFood}>{item.name} </Text>
-                                        <Text style={styles.txtFood}>{item.quantidade} </Text>
+                                        <Text style={styles.txtPrice}>R$ {item.price}</Text>
+
+                                        <TouchableOpacity onPress={() => selectItem(item, index)}>
+                                            <AntDesign name="pluscircle" size={35} color="black" style={styles.btnMore} />
+                                        </TouchableOpacity>
+
                                     </View>
 
-                                    <ImageBackground
-                                        source={item.img}
-                                        style={styles.img}
-                                        imageStyle={{ borderRadius: 6 }}
-                                    >
+                                </ImageBackground>
 
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                            <Text style={styles.txtPrice}>R$ {item.price}</Text>
-                                            <AntDesign name="pluscircle" size={30} color="black" style={styles.btnMore} />
-                                        </View>
-
-                                    </ImageBackground>
-                                </View>
-                            </TouchableOpacity>
+                            </View>
                         )}
                     />
+
                 </SafeAreaView>
             </Modal>
 
@@ -316,10 +345,19 @@ export default function Home() {
             >
                 <SafeAreaView style={styles.containerModal}>
 
+                    <NumberFormat
+                        value={total}
+                        decimalSeparator=","
+                        decimalScale={2}
+                        displayType={'text'}
+                        prefix={'R$: '}
+                        renderText={(value) =>
+                            <Text style={styles.titleBanner}><MaterialIcons name="local-grocery-store" size={27} color="red" />{value}</Text>
+                        } />
+
                     <TouchableOpacity //Fechar
                         onPress={() => { setPortion(false) }}>
-                        <AntDesign name="closecircle" size={30} color="red"
-                            style={{ alignSelf: 'center', marginBottom: 10 }} />
+                        <AntDesign name="closecircle" size={30} color="red" style={{ alignSelf: 'center' }} />
                     </TouchableOpacity>
 
                     <FlatList
@@ -327,31 +365,34 @@ export default function Home() {
                         keyExtractor={(item) => item.id}
                         renderItem={({ item, index }) => (
 
-                            <TouchableOpacity onPress={() => selectItem(item, index)}>
-                                <View style={styles.btnFood}>
+                            <View style={styles.btnFood}>
+
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <Text style={styles.txtFood}>{item.name} </Text>
+                                    <Text style={styles.txtFood}>{item.quantidade} </Text>
+                                </View>
+
+                                <ImageBackground
+                                    source={item.img}
+                                    style={styles.img}
+                                    imageStyle={{ borderRadius: 6 }}
+                                >
 
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <Text style={styles.txtFood}>{item.name} </Text>
-                                        <Text style={styles.txtFood}>{item.quantidade} </Text>
+                                        <Text style={styles.txtPrice}>R$ {item.price}</Text>
+
+                                        <TouchableOpacity onPress={() => selectItem(item, index)}>
+                                            <AntDesign name="pluscircle" size={35} color="black" style={styles.btnMore} />
+                                        </TouchableOpacity>
+
                                     </View>
 
-                                    <ImageBackground
-                                        source={item.img}
-                                        style={styles.img}
-                                        imageStyle={{ borderRadius: 6 }}
-                                    >
+                                </ImageBackground>
 
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                            <Text style={styles.txtPrice}>R$ {item.price}</Text>
-                                            <AntDesign name="pluscircle" size={30} color="black" style={styles.btnMore} />
-
-                                        </View>
-
-                                    </ImageBackground>
-                                </View>
-                            </TouchableOpacity>
+                            </View>
                         )}
                     />
+
                 </SafeAreaView>
             </Modal>
 
@@ -362,10 +403,19 @@ export default function Home() {
             >
                 <SafeAreaView style={styles.containerModal}>
 
+                    <NumberFormat
+                        value={total}
+                        decimalSeparator=","
+                        decimalScale={2}
+                        displayType={'text'}
+                        prefix={'R$: '}
+                        renderText={(value) =>
+                            <Text style={styles.titleBanner}><MaterialIcons name="local-grocery-store" size={27} color="red" />{value}</Text>
+                        } />
+
                     <TouchableOpacity //Fechar
                         onPress={() => { setDrink(false) }}>
-                        <AntDesign name="closecircle" size={30} color="red"
-                            style={{ alignSelf: 'center', marginBottom: 10 }} />
+                        <AntDesign name="closecircle" size={30} color="red" style={{ alignSelf: 'center' }} />
                     </TouchableOpacity>
 
                     <FlatList
@@ -373,28 +423,31 @@ export default function Home() {
                         keyExtractor={(item) => item.id}
                         renderItem={({ item, index }) => (
 
-                            <TouchableOpacity onPress={() => selectItem(item, index)}>
-                                <View style={styles.btnFood}>
+                            <View style={styles.btnFood}>
+
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <Text style={styles.txtFood}>{item.name} </Text>
+                                    <Text style={styles.txtFood}>{item.quantidade} </Text>
+                                </View>
+
+                                <ImageBackground
+                                    source={item.img}
+                                    style={styles.img}
+                                    imageStyle={{ borderRadius: 6 }}
+                                >
 
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <Text style={styles.txtFood}>{item.name} </Text>
-                                        <Text style={styles.txtFood}>{item.quantidade} </Text>
+                                        <Text style={styles.txtPrice}>R$ {item.price}</Text>
+
+                                        <TouchableOpacity onPress={() => selectItem(item, index)}>
+                                            <AntDesign name="pluscircle" size={35} color="black" style={styles.btnMore} />
+                                        </TouchableOpacity>
+
                                     </View>
 
-                                    <ImageBackground
-                                        source={item.img}
-                                        style={styles.img}
-                                        imageStyle={{ borderRadius: 6 }}
-                                    >
+                                </ImageBackground>
 
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                            <Text style={styles.txtPrice}>R$ {item.price}</Text>
-                                            <AntDesign name="pluscircle" size={30} color="black" style={styles.btnMore} />
-                                        </View>
-
-                                    </ImageBackground>
-                                </View>
-                            </TouchableOpacity>
+                            </View>
                         )}
                     />
                 </SafeAreaView>
@@ -418,8 +471,23 @@ export default function Home() {
                     <ScrollView>
                         <View style={{ alignSelf: 'center' }}>
                             <Text>{pedidos}</Text>
-                            <Text style={{ fontWeight: 'bold' }}>Valor: {total}</Text>
+
+                            <NumberFormat
+                                value={total}
+                                decimalSeparator=","
+                                decimalScale={2}
+                                displayType={'text'}
+                                prefix={'R$ '}
+                                renderText={(value) =>
+                                    <Text style={{ fontWeight: 'bold' }}>Valor: {value}</Text>
+                                } />
+
                             <Text>Cliente: {name} {"\n"}Endereço: {address}</Text>
+                            {/* <TextInput
+                            placeholder="CODIGO PROMOCIONAL"
+                            value={promo}
+                            onChangeText={promo => setPromo(promo)}
+                            /> */}
                         </View>
                     </ScrollView>
 
@@ -430,7 +498,7 @@ export default function Home() {
                 </SafeAreaView>
             </Modal>
 
-            <View style={{ flexDirection: 'row', backgroundColor: 'white' }}>
+            <View style={{ flexDirection: 'row', backgroundColor: 'red' }}>
 
                 <TouchableOpacity style={styles.btnEat}
                     onPress={() => { setFood(true) }}>
@@ -441,7 +509,7 @@ export default function Home() {
                 <TouchableOpacity style={styles.btnEat}
                     onPress={() => { setPortion(true) }}>
                     <Text style={styles.txtEat} ><MaterialIcons name="dinner-dining" size={30} color="white" /></Text>
-                    <Text style={styles.txtEat} >Porçoes</Text>
+                    <Text style={styles.txtEat} >Porções</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.btnEat}
@@ -454,20 +522,20 @@ export default function Home() {
         </SafeAreaView>
     )
 }
+
 const styles = StyleSheet.create({
     container: {
-        marginTop: StatusBar.currentHeight,
+        // marginTop: StatusBar.currentHeight,
         flex: 1
     },
     containerModal: {
         flex: 1,
-        marginTop: 50,
         backgroundColor: 'white'
     },
     btnMore: {
-        marginTop: 10,
-        marginBottom: 10,
-        marginRight: 10,
+        marginTop: 5,
+        marginBottom: 5,
+        marginRight: 5,
         alignItems: 'center'
     },
     btnEnd: {
@@ -483,7 +551,9 @@ const styles = StyleSheet.create({
     },
     txtEat: {
         alignSelf: 'center',
-        color: 'white'
+        color: 'white',
+        marginBottom: 0,
+        fontSize: 15,
     },
     titleBanner: {
         fontSize: 30,
