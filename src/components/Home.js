@@ -1,14 +1,16 @@
-import React, { useState, useEffect, Component } from 'react'
-import { ImageBackground, AsyncStorage, View, Text, StyleSheet, Modal, TouchableOpacity, StatusBar, SafeAreaView, ScrollView, FlatList, TextInput, Alert, Image } from 'react-native'
-import { MaterialIcons } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
+import React, { useState, useEffect } from 'react'
+import { ImageBackground, AsyncStorage, View, Text, StyleSheet, Modal, TouchableOpacity, StatusBar, SafeAreaView, ScrollView, FlatList, TextInput, Alert } from 'react-native'
+import { Checkbox } from 'react-native-paper';
+
 import { Linking } from 'react-native';
 import NumberFormat from 'react-number-format';
 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-//arastar imagens pro lado com ofertas
+import styles from '../Styles/styles'
 //modo de entrega local/endereço/buscar
-//codigo promocional/desconto
+//X codigo promocional/desconto
+//X observação no lanche
 
 const FOOD = [
     {
@@ -107,7 +109,14 @@ export default function Home() {
     const [address, setAddress] = useState(newAddress);
     const [newAddress, setNewAddress] = useState(address)
 
+    const [payment, setPayment] = useState(newPayment)
+    const [newPayment, setNewPayment] = useState(payment)
+
+    const [money, setMoney] = useState()
+    const [card, setCard] = useState()
+
     const [promo, setPromo] = useState('')
+    const [obs, setObs] = useState('')
 
     //Modals
     const [food, setFood] = useState(false)
@@ -115,10 +124,6 @@ export default function Home() {
     const [portion, setPortion] = useState(false)
     const [profile, setProfile] = useState(false)
     const [finish, setFinish] = useState(false)
-
-    var phone = 5551993554823
-    var mensagem = name + " gostaria de encomendar:" + "\n" + pedidos + "\n" + "Endereço: " + address + "\n" + "Aceitar ?"
-
 
     //Save Name
     useEffect(() => {
@@ -131,7 +136,6 @@ export default function Home() {
         }
         carregaDados();
     }, []);
-
     useEffect(() => {
         async function salvaDados() {
             AsyncStorage.setItem("name", JSON.stringify(name));
@@ -139,7 +143,7 @@ export default function Home() {
         salvaDados();
     }, [name]);
 
-    //Save Profile
+    //Save Address
     useEffect(() => {
         async function carregaDados() {
             const address = await AsyncStorage.getItem("address");
@@ -150,13 +154,30 @@ export default function Home() {
         }
         carregaDados();
     }, []);
-
     useEffect(() => {
         async function salvaDados() {
             AsyncStorage.setItem("address", JSON.stringify(address));
         }
         salvaDados();
     }, [address]);
+
+    //Save Payment
+    useEffect(() => {
+        async function carregaDados() {
+            const payment = await AsyncStorage.getItem("payment");
+
+            if (payment) {
+                setPayment(JSON.parse(payment));
+            }
+        }
+        carregaDados();
+    }, []);
+    useEffect(() => {
+        async function salvaDados() {
+            AsyncStorage.setItem("payment", JSON.stringify(payment));
+        }
+        salvaDados();
+    }, [payment]);
 
     //Functions
     function selectItem(item) {
@@ -182,9 +203,16 @@ export default function Home() {
     function cleanWish() {
         removeItem()
         setTotal(0)
+        setObs('')
         setPedidos([])
     }
     function saveProfile() {
+        if(money === 'checked'){
+            setPayment("Dinheiro")
+        }
+        if(card === 'checked'){
+            setPayment("Cartão")
+        }
         setProfile(false)
         setName(name)
         setAddress(address)
@@ -192,11 +220,24 @@ export default function Home() {
             "Seu perfil foi salvo !!")
     }
     function sendZap() {
-        Linking.openURL(`whatsapp://send?text=${mensagem}&phone=${phone}`);
+        if (obs === '') {
+            Linking.openURL(`whatsapp://send?text=${mensagem2}&phone=${phone}`);
+        } else {
+            Linking.openURL(`whatsapp://send?text=${mensagem}&phone=${phone}`);
+        }
     }
 
-    return (
+    //CLIENTE - ENTREGA
+    const [inAddress, setInAddress] = useState("checked")
+    const [inLancheria, setInLancheria] = useState("unchecked")
+    const [inLocal, setInLocal] = useState("unchecked")
+    const [inFinal, setInFinal] = useState("Endereço Cadastrado")
 
+    var phone = 5551993554823
+    var mensagem = name + " gostaria de encomendar:" + "\n" + "\n" + pedidos + "\n"  + "Obs: " + obs + "\n" + "\n" + "Pagamento: " + payment + "\n" + "Endereço: " + address + "\n"  + "Entrega: " + inFinal + "\n" + "\n" + "Aceitar ?"
+    var mensagem2 = name + " gostaria de encomendar:" + "\n" + "\n" + pedidos + "\n" + "Pagamento: " + payment + "\n" + "Endereço: " + address + "\n"  + "Entrega: " + inFinal + "\n" + "\n" + "Aceitar ?"
+
+    return (
         <SafeAreaView style={styles.container}>
 
             <StatusBar
@@ -209,7 +250,7 @@ export default function Home() {
                 <TouchableOpacity
                     style={styles.titleBanner}
                     onPress={() => setProfile(true)}>
-                    <MaterialIcons name="tag-faces" size={40} color="black" />
+                    <MaterialCommunityIcons name="home-account" size={40} color="black" />
                 </TouchableOpacity>
 
                 <NumberFormat
@@ -219,21 +260,19 @@ export default function Home() {
                     displayType={'text'}
                     prefix={'R$: '}
                     renderText={(value) =>
-                        <Text style={styles.titleBanner}><MaterialIcons name="local-grocery-store" size={27} color="red" />{value}</Text>
+                        <Text style={styles.titleBanner}><MaterialCommunityIcons name="cart" size={27} color="red" />{value}</Text>
                     } />
             </View>
 
-            <View style={{ flexDirection: 'row', alignSelf: 'center' }}>
+            <View style={{ flexDirection: 'row', alignSelf: 'center' }} /* btns home screen*/>
                 <TouchableOpacity style={styles.btnEnd} //Concluir Pedido
-                    onPress={() => setFinish(true)}
-                >
-                    <Text style={{ color: "white", fontSize: 18 }}> <AntDesign name="checkcircle" size={20} color="white" /> Concluir Pedido</Text>
+                    onPress={() => setFinish(true)}>
+                    <Text style={{ color: "white", fontSize: 18 }}> <MaterialCommunityIcons name="check-circle" size={24} color="white" /> Concluir Pedido</Text>
                 </TouchableOpacity>
-
 
                 <TouchableOpacity style={styles.btnEnd} //Limpar Pedidos
                     onPress={() => cleanWish()}>
-                    <Text style={{ color: "white", fontSize: 18 }}> <AntDesign name="closecircle" size={20} color="white" /> Limpar Lista</Text>
+                    <Text style={{ color: "white", fontSize: 18 }}> <MaterialCommunityIcons name="close-circle" size={24} color="white" /> Limpar Lista</Text>
                 </TouchableOpacity>
             </View>
 
@@ -248,7 +287,7 @@ export default function Home() {
                 <SafeAreaView style={styles.containerModal}>
                     <TouchableOpacity
                         onPress={() => saveProfile()}
-                        style={{ alignSelf: 'center', marginTop: 20, borderRadius: 7, backgroundColor: 'red', paddingHorizontal: 20 }}>
+                        style={styles.btnProfile}>
                         <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>SALVAR</Text>
                     </TouchableOpacity>
 
@@ -271,10 +310,34 @@ export default function Home() {
                             maxLength={50}
                             placeholder="Endereço">
                         </TextInput>
+                        <Text>Pagamento: {payment}</Text>
+                        <View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Checkbox
+                                    style={{ alignItems: 'center' }}
+                                    status={money}
+                                    disabled={false}
+                                    color="red"
+                                    onPress={() => { setMoney("checked"), setCard("unchecked")}}
+                                />
+                                <Text style={{ fontSize: 24 }}>Dinheiro</Text>
+                            </View>
+
+                            <View style={{ flexDirection: 'row' }}>
+                                <Checkbox
+                                    style={{ alignItems: 'center' }}
+                                    status={card}
+                                    disabled={false}
+                                    color="red"
+                                    onPress={() => { setMoney("unchecked"), setCard("checked")}}
+                                />
+                                <Text style={{ fontSize: 24 }}>Cartão</Text>
+                            </View>
+                        </View>
                     </View>
                     <TouchableOpacity
                         onPress={() => { setProfile(false) }}>
-                        <AntDesign name="closecircle" size={30} color="red" style={{ alignSelf: 'center', marginTop: 10 }} />
+                        <MaterialCommunityIcons name="close-circle" size={30} color="red" style={{ alignSelf: 'center', marginTop: 10 }} />
                     </TouchableOpacity>
 
                 </SafeAreaView>
@@ -294,12 +357,12 @@ export default function Home() {
                         displayType={'text'}
                         prefix={'R$: '}
                         renderText={(value) =>
-                            <Text style={styles.titleBanner}><MaterialIcons name="local-grocery-store" size={27} color="red" />{value}</Text>
+                            <Text style={styles.titleBanner}><MaterialCommunityIcons name="cart" size={27} color="red" />{value}</Text>
                         } />
 
                     <TouchableOpacity //Fechar
                         onPress={() => { setFood(false) }}>
-                        <AntDesign name="closecircle" size={30} color="red" style={{ alignSelf: 'center' }} />
+                        <MaterialCommunityIcons name="close-circle" size={30} color="red" style={{ alignSelf: 'center' }} />
                     </TouchableOpacity>
 
                     <FlatList
@@ -324,7 +387,7 @@ export default function Home() {
                                         <Text style={styles.txtPrice}>R$ {item.price}</Text>
 
                                         <TouchableOpacity onPress={() => selectItem(item, index)}>
-                                            <AntDesign name="pluscircle" size={35} color="black" style={styles.btnMore} />
+                                            <MaterialCommunityIcons name="plus-circle-outline" size={40} color="black" style={styles.btnMore} />
                                         </TouchableOpacity>
 
                                     </View>
@@ -352,12 +415,12 @@ export default function Home() {
                         displayType={'text'}
                         prefix={'R$: '}
                         renderText={(value) =>
-                            <Text style={styles.titleBanner}><MaterialIcons name="local-grocery-store" size={27} color="red" />{value}</Text>
+                            <Text style={styles.titleBanner}><MaterialCommunityIcons name="cart" size={27} color="red" />{value}</Text>
                         } />
 
                     <TouchableOpacity //Fechar
                         onPress={() => { setPortion(false) }}>
-                        <AntDesign name="closecircle" size={30} color="red" style={{ alignSelf: 'center' }} />
+                        <MaterialCommunityIcons name="close-circle" size={30} color="red" style={{ alignSelf: 'center' }} />
                     </TouchableOpacity>
 
                     <FlatList
@@ -382,7 +445,7 @@ export default function Home() {
                                         <Text style={styles.txtPrice}>R$ {item.price}</Text>
 
                                         <TouchableOpacity onPress={() => selectItem(item, index)}>
-                                            <AntDesign name="pluscircle" size={35} color="black" style={styles.btnMore} />
+                                            <MaterialCommunityIcons name="plus-circle-outline" size={40} color="black" style={styles.btnMore} />
                                         </TouchableOpacity>
 
                                     </View>
@@ -410,12 +473,12 @@ export default function Home() {
                         displayType={'text'}
                         prefix={'R$: '}
                         renderText={(value) =>
-                            <Text style={styles.titleBanner}><MaterialIcons name="local-grocery-store" size={27} color="red" />{value}</Text>
+                            <Text style={styles.titleBanner}><MaterialCommunityIcons name="cart" size={27} color="red" />{value}</Text>
                         } />
 
                     <TouchableOpacity //Fechar
                         onPress={() => { setDrink(false) }}>
-                        <AntDesign name="closecircle" size={30} color="red" style={{ alignSelf: 'center' }} />
+                        <MaterialCommunityIcons name="close-circle" size={30} color="red" style={{ alignSelf: 'center' }} />
                     </TouchableOpacity>
 
                     <FlatList
@@ -440,7 +503,7 @@ export default function Home() {
                                         <Text style={styles.txtPrice}>R$ {item.price}</Text>
 
                                         <TouchableOpacity onPress={() => selectItem(item, index)}>
-                                            <AntDesign name="pluscircle" size={35} color="black" style={styles.btnMore} />
+                                            <MaterialCommunityIcons name="plus-circle-outline" size={40} color="black" style={styles.btnMore} />
                                         </TouchableOpacity>
 
                                     </View>
@@ -463,13 +526,14 @@ export default function Home() {
                     <View>
                         <TouchableOpacity
                             onPress={() => { setFinish(false) }}>
-                            <AntDesign name="closecircle" size={30} color="red" style={{ alignSelf: 'center', marginBottom: 10 }} />
+                            <MaterialCommunityIcons name="close-circle" size={30} color="red" style={{ alignSelf: 'center', marginBottom: 10 }} />
                         </TouchableOpacity>
                     </View>
 
-                    <Text style={styles.titleBanner}>CONFIRA SEU PEDIDO</Text>
+
                     <ScrollView>
                         <View style={{ alignSelf: 'center' }}>
+                            <Text style={styles.titleBanner}>PEDIDO</Text>
                             <Text>{pedidos}</Text>
 
                             <NumberFormat
@@ -482,12 +546,64 @@ export default function Home() {
                                     <Text style={{ fontWeight: 'bold' }}>Valor: {value}</Text>
                                 } />
 
-                            <Text>Cliente: {name} {"\n"}Endereço: {address}</Text>
+
+
+                            <Text>Observações:</Text>
+                            <TextInput
+                                placeholder="(ex: X Salada sem tomate)"
+                                value={obs}
+                                autoFocus={true}
+                                onChangeText={obs => setObs(obs)}
+                            />
+
+
                             {/* <TextInput
                             placeholder="CODIGO PROMOCIONAL"
                             value={promo}
                             onChangeText={promo => setPromo(promo)}
                             /> */}
+                        </View>
+                        <Text style={styles.titleBanner}>DADOS</Text>
+                        <View style={{ alignSelf: 'center' }}>
+                            <Text>Cliente: {name} {"\n"}Endereço: {address} {"\n"}Pagamento: {payment}</Text>
+
+                            <TouchableOpacity
+                                style={styles.btnProfile}
+                                onPress={() => setProfile(true)}>
+                                <Text style={{ color: 'white', padding: 10 }}>ALTERAR DADOS</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <Text style={styles.titleBanner}>ENTREGA</Text>
+                        <View style={{ alignSelf: 'center' }}>
+                        
+                        <View style={{flexDirection: 'row'}} /* ADDRESS */>
+                            <Checkbox
+                                status={inAddress}
+                                color="red"
+                                onPress={() => { setInAddress("checked"), setInLancheria("unchecked"), setInLocal("unchecked"), setInFinal("Endereço Cadastrado") }}
+                            />
+                            <Text style={{fontSize: 20}}>{address}</Text>
+                        </View>
+                        
+                        <View style={{flexDirection: 'row'}} /* LANCHERIA */>
+                            <Checkbox
+                                status={inLancheria}
+                                color="red"
+                                onPress={() => {setInAddress("unchecked"), setInLancheria("checked"), setInLocal("unchecked"), setInFinal("Lancheria") }}
+                            />
+                            <Text style={{fontSize: 20}}>Comer na Lancheria</Text>
+                        </View>
+
+                        
+                        <View style={{flexDirection: 'row'}} /* IREI BUSCAR */>
+                            <Checkbox
+                                status={inLocal}
+                                color="red"
+                                onPress={() => {setInAddress("unchecked"), setInLancheria("unchecked"), setInLocal("checked"), setInFinal("Buscar") }}
+                            />
+                            <Text style={{fontSize: 20}}>Vou buscar</Text>
+                        </View>
+
                         </View>
                     </ScrollView>
 
@@ -502,102 +618,22 @@ export default function Home() {
 
                 <TouchableOpacity style={styles.btnEat}
                     onPress={() => { setFood(true) }}>
-                    <Text style={styles.txtEat} ><MaterialIcons name="lunch-dining" size={30} color="white" /></Text>
+                    <Text style={styles.txtEat} ><MaterialCommunityIcons name="hamburger" size={30} color="white" /></Text>
                     <Text style={styles.txtEat} >Lanches</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.btnEat}
                     onPress={() => { setPortion(true) }}>
-                    <Text style={styles.txtEat} ><MaterialIcons name="dinner-dining" size={30} color="white" /></Text>
+                    <Text style={styles.txtEat} ><MaterialCommunityIcons name="food-drumstick" size={30} color="white" /></Text>
                     <Text style={styles.txtEat} >Porções</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.btnEat}
                     onPress={() => { setDrink(true) }}>
-                    <Text style={styles.txtEat} ><MaterialIcons name="local-drink" size={30} color="white" /></Text>
+                    <Text style={styles.txtEat} ><MaterialCommunityIcons name="beer" size={30} color="white" /></Text>
                     <Text style={styles.txtEat} >Bebidas</Text>
                 </TouchableOpacity>
             </View>
-
         </SafeAreaView>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        // marginTop: StatusBar.currentHeight,
-        flex: 1
-    },
-    containerModal: {
-        flex: 1,
-        backgroundColor: 'white'
-    },
-    btnMore: {
-        marginTop: 5,
-        marginBottom: 5,
-        marginRight: 5,
-        alignItems: 'center'
-    },
-    btnEnd: {
-        alignSelf: 'center',
-        backgroundColor: 'red',
-        padding: 10,
-        borderRadius: 7,
-        marginHorizontal: 5,
-    },
-    btnEat: {
-        flex: 1,
-        backgroundColor: 'red',
-    },
-    txtEat: {
-        alignSelf: 'center',
-        color: 'white',
-        marginBottom: 0,
-        fontSize: 15,
-    },
-    titleBanner: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        alignItems: 'center',
-        alignSelf: 'center',
-        padding: 7,
-        marginHorizontal: 10,
-    },
-    btnFood: {
-        marginHorizontal: 15,
-        marginTop: 15,
-        backgroundColor: 'red',
-        borderRadius: 10,
-        elevation: 7,
-    },
-    txtFood: {
-        fontSize: 22,
-        padding: 5,
-        color: 'white',
-        fontWeight: 'bold'
-    },
-    txtPrice: {
-        fontSize: 22,
-        padding: 5,
-        color: 'white',
-        fontWeight: 'bold',
-        backgroundColor: 'red',
-        width: 100,
-        borderBottomRightRadius: 20,
-        borderBottomLeftRadius: 7,
-    },
-    titleFood: {
-        alignSelf: 'center',
-        marginTop: 10,
-        fontSize: 25
-    },
-    input: {
-        padding: 10,
-        color: 'black',
-        fontSize: 20
-    },
-    img: {
-        flex: 1,
-        resizeMode: "cover",
-    }
-})
