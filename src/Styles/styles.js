@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     },
     containerModal: {
         flex: 1,
-        backgroundColor: 'white'
+        backgroundColor: '#eee',
     },
     btnMore: {
         marginTop: 5,
@@ -35,17 +35,18 @@ const styles = StyleSheet.create({
     titleBanner: {
         fontSize: 30,
         fontWeight: 'bold',
-        alignItems: 'center',
-        alignSelf: 'center',
         padding: 7,
-        marginHorizontal: 10,
+        // alignItems: 'center',
+        // alignSelf: 'center',
+        // marginHorizontal: 10,
     },
     btnFood: {
         marginHorizontal: 15,
         marginTop: 15,
+        marginBottom: 5,
         backgroundColor: 'red',
         borderRadius: 10,
-        elevation: 7,
+        elevation: 4,
     },
     txtFood: {
         fontSize: 22,
@@ -83,7 +84,20 @@ const styles = StyleSheet.create({
         borderRadius: 7,
         backgroundColor: 'red',
         paddingHorizontal: 20
-    }
+    },
+    txtInfoWish: {
+        fontSize: 18
+    },
+    pedidoInfo: {
+         alignSelf: 'center' ,
+         backgroundColor: 'white',
+         padding: 10,
+         borderRadius: 7,
+         elevation: 7,
+         marginBottom: 10,
+         marginTop: 10,
+         width: 250
+        }
 })
 
 export default styles;
