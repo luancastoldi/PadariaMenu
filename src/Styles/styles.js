@@ -13,7 +13,10 @@ const styles = StyleSheet.create({
         marginTop: 5,
         marginBottom: 5,
         marginRight: 5,
-        alignItems: 'center'
+        alignItems: 'center',
+        // backgroundColor: 'white',
+        // borderRadius: 100,
+        // padding: 10
     },
     btnEnd: {
         alignSelf: 'center',
@@ -89,15 +92,22 @@ const styles = StyleSheet.create({
         fontSize: 18
     },
     pedidoInfo: {
-         alignSelf: 'center' ,
-         backgroundColor: 'white',
-         padding: 10,
-         borderRadius: 7,
-         elevation: 7,
-         marginBottom: 10,
-         marginTop: 10,
-         width: 250
-        }
+        alignSelf: 'center',
+        backgroundColor: 'white',
+        padding: 10,
+        borderRadius: 7,
+        elevation: 7,
+        marginBottom: 10,
+        marginTop: 10,
+        width: 250
+    },
+    btnTopModal: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginHorizontal: 10
+    }
 })
+
 
 export default styles;

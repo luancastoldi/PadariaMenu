@@ -282,7 +282,7 @@ export default function Home() {
             >
                 <SafeAreaView style={styles.containerModal}>
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 15 }}>
+                    <View style={styles.btnTopModal}>
                         <NumberFormat
                             value={total}
                             decimalSeparator=","
@@ -321,7 +321,7 @@ export default function Home() {
                                         <Text style={styles.txtPrice}>R$ {item.price}</Text>
 
                                         <TouchableOpacity onPress={() => selectItem(item, index)}>
-                                            <MaterialCommunityIcons name="plus-circle-outline" size={40} color="black" style={styles.btnMore} />
+                                            <MaterialCommunityIcons name="plus-circle" size={40} color="black" style={styles.btnMore} />
                                         </TouchableOpacity>
 
                                     </View>
@@ -343,7 +343,7 @@ export default function Home() {
                 <SafeAreaView style={styles.containerModal}>
 
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 15 }}>
+                    <View style={styles.btnTopModal}>
                         <NumberFormat
                             value={total}
                             decimalSeparator=","
@@ -382,7 +382,7 @@ export default function Home() {
                                         <Text style={styles.txtPrice}>R$ {item.price}</Text>
 
                                         <TouchableOpacity onPress={() => selectItem(item, index)}>
-                                            <MaterialCommunityIcons name="plus-circle-outline" size={40} color="black" style={styles.btnMore} />
+                                            <MaterialCommunityIcons name="plus-circle" size={40} color="black" style={styles.btnMore} />
                                         </TouchableOpacity>
 
                                     </View>
@@ -403,7 +403,7 @@ export default function Home() {
             >
                 <SafeAreaView style={styles.containerModal}>
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 15 }}>
+                    <View style={styles.btnTopModal}>
                         <NumberFormat
                             value={total}
                             decimalSeparator=","
@@ -441,7 +441,7 @@ export default function Home() {
                                         <Text style={styles.txtPrice}>R$ {item.price}</Text>
 
                                         <TouchableOpacity onPress={() => selectItem(item, index)}>
-                                            <MaterialCommunityIcons name="plus-circle-outline" size={40} color="black" style={styles.btnMore} />
+                                            <MaterialCommunityIcons name="plus-circle" size={40} color="black" style={styles.btnMore} />
                                         </TouchableOpacity>
 
                                     </View>

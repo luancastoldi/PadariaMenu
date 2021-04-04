@@ -20,5 +20,19 @@ const FOOD = [
         quantidade: 0,
         img: require('../images/xis.jpg')
     },
+    {
+        id: '400004',
+        name: 'Hamburguer',
+        price: 11,
+        quantidade: 0,
+        img: require('../images/hm.jpg')
+    },
+    {
+        id: '500005',
+        name: 'Hamburguer Big',
+        price: 15,
+        quantidade: 0,
+        img: require('../images/hm.jpg')
+    },
 ];
 export default FOOD
