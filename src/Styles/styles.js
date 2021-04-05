@@ -109,6 +109,16 @@ const styles = StyleSheet.create({
     },
     negrito: {
         fontWeight: 'bold'
+    },
+    txtNameBar:{
+        color: 'black',
+        textAlign: 'center',
+        fontSize: 30,
+        marginTop: 5,
+        borderColor: 'black',
+        backgroundColor: '#eeee',
+        fontStyle: 'italic',
+        fontWeight: 'bold'
     }
 })
 

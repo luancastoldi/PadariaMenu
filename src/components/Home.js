@@ -185,7 +185,7 @@ export default function Home() {
                     renderText={(value) =>
                         <Text style={styles.titleBanner}><MaterialCommunityIcons name="cart" size={27} color="red" />{value}</Text>
                     } />
-
+   
                 <TouchableOpacity
                     style={styles.titleBanner}
                     onPress={() => setProfile(true)}>
@@ -204,11 +204,11 @@ export default function Home() {
                     <Text style={{ color: "white", fontSize: 20 }}><MaterialCommunityIcons name="close-circle" size={20} color="white" /> Limpar Lista</Text>
                 </TouchableOpacity>
             </View>
-
+           
             <ScrollView>
                 <Text style={{ textAlign: 'center', fontSize: 25, marginTop: 40 }} >{pedidos}</Text>
             </ScrollView>
-
+            <Text style={styles.txtNameBar}>Nome Lancheria</Text>
             <Modal //Profile
                 visible={profile}
                 animationType="fade"
@@ -271,7 +271,8 @@ export default function Home() {
                         onPress={() => { setProfile(false) }}>
                         <MaterialCommunityIcons name="close-circle" size={30} color="red" style={{ alignSelf: 'center', marginTop: 10 }} />
                     </TouchableOpacity>
-
+                    <ScrollView></ScrollView>
+                        <Text style={{textAlign: 'center', fontWeight: 'bold'}}>Luan Castoldi / LC Company</Text>
                 </SafeAreaView>
             </Modal>
 
