@@ -106,6 +106,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         marginHorizontal: 10
+    },
+    negrito: {
+        fontWeight: 'bold'
     }
 })
 

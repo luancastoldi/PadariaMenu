@@ -481,10 +481,10 @@ export default function Home() {
                                 displayType={'text'}
                                 prefix={'R$ '}
                                 renderText={(value) =>
-                                    <Text style={styles.txtInfoWish}>Valor: {value}</Text>
+                                    <Text style={styles.txtInfoWish}><Text style={styles.negrito}>Valor Total:</Text>{value}</Text>
                                 } />
 
-                            <Text style={styles.txtInfoWish}>Observações:</Text>
+                            <Text style={styles.txtInfoWish}><Text style={styles.negrito}>Observações:</Text></Text>
                             <TextInput
                                 style={styles.txtInfoWish}
                                 placeholder="(ex: X Salada sem tomate)"
@@ -502,7 +502,7 @@ export default function Home() {
 
                         <View style={styles.pedidoInfo}>
                             <Text style={styles.titleBanner}>DADOS</Text>
-                            <Text style={styles.txtInfoWish}>Cliente: {name} {"\n"}Endereço: {address} {"\n"}Pagamento: {payment}</Text>
+                            <Text style={styles.txtInfoWish}><Text style={styles.negrito}>Cliente:</Text> {name} {"\n"}<Text style={styles.negrito}>Endereço: </Text>{address} {"\n"}<Text style={styles.negrito}>Pagamento: </Text> {payment}</Text>
 
                             <TouchableOpacity
                                 style={styles.btnProfile}
@@ -520,7 +520,7 @@ export default function Home() {
                                     color="red"
                                     onPress={() => { setInAddress("checked"), setInLancheria("unchecked"), setInLocal("unchecked"), setInFinal("Endereço Cadastrado") }}
                                 />
-                                <Text style={{ fontSize: 20 }}>{address}</Text>
+                                <Text style={{ fontSize: 20, maxWidth: 200 }}>{address}</Text>
                             </View>
 
                             <View style={{ flexDirection: 'row' }} /* LANCHERIA */>
